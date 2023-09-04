@@ -2,7 +2,11 @@
 #include <stdio.h>
 
 int main();
+
+/*It calls functions to input the Sudoku grid, validate it, and attempt to solve it.
+It then prints the solved puzzle or an error message if the puzzle is unsolvable.*/
 int input_grid();
+
 int validate_grid();
 int solve_cell(int row, int column);
 int is_valid(int row, int column, int value);
@@ -35,7 +39,8 @@ int main()
 	print_grid();
 	return 0;
 }
-
+/* input_grid is responsible for taking user input for the Sudoku grid.
+It prompts the user to enter the puzzle row by row, using numbers for known cells and '.' or '0' for missing cells.*/
 int input_grid()
 {
 	int character, row, column;
@@ -69,7 +74,8 @@ int input_grid()
 
 	return 1;
 }
-
+/* validate_grid checks if the initially input Sudoku grid is valid.
+It ensures that no row, column, or 3x3 subgrid contains duplicate numbers, violating Sudoku rules.*/
 int validate_grid()
 {
 	int i, j;
@@ -82,7 +88,9 @@ int validate_grid()
 
 	return 1;
 }
-
+/* solve_cell is a recursive function responsible for solving the Sudoku puzzle.
+It attempts to fill each cell with a number from 1 to 9 while checking if the number is valid according to Sudoku rules.
+If it successfully fills all cells, it returns 1, indicating success. If it cannot find a valid */
 int solve_cell(int row, int column)
 {
 	int number = 1;
@@ -110,7 +118,8 @@ int solve_cell(int row, int column)
 
 	return 0;
 }
-
+/* is_valid checks if placing a particular value in a cell at a given row and column is valid according to Sudoku rules.
+It checks if the value is already present in the row, column, or 3x3 subgrid and returns 1 if it's a valid placement, and 0 if it's not.*/
 int is_valid(int row, int column, int value)
 {
 	int i, j, r, c;
