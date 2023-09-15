@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+// Define the size of the Sudoku grid
+#define N 9
+
+// Function to print the Sudoku board
+void printBoard(int board[N][N]) {
+    printf("\nSudoku Board:\n");
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%2d ", board[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Function to check if a number can be placed in a given cell
+bool isValid(int board[N][N], int row, int col, int num) {
+    // Check the row and column
+    for (int i = 0; i < N; i++) {
+        if (board[row][i] == num || board[i][col] == num) {
+            return false;
+        }
+    }
+
+    // Check the 3x3 grid
+    int startRow = (row / 3) * 3;
+    int startCol = (col / 3) * 3;
+    for (int i = startRow; i < startRow + 3; i++) {
+        for (int j = startCol; j < startCol + 3; j++) {
+            if (board[i][j] == num) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// Function to generate a randomized Sudoku puzzle
+void generateRandomSudoku(int board[N][N], int level) {
+    // Clear the board
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            board[i][j] = 0;
+        }
+    }
+
+    // Seed the random number generator
+    srand(time(NULL));
+
+    // Generate a Sudoku puzzle by filling random cells
+    int filledCells = 0;
+    while (filledCells < level) {
+        int row = rand() % N;
+        int col = rand() % N;
+        int num = rand() % 9 + 1;
+
+        if (isValid(board, row, col, num) && board[row][col] == 0) {
+            board[row][col] = num;
+            filledCells++;
+        }
+    }
+}
+
+// Function to check if the Sudoku puzzle is solved
+bool isSolved(int board[N][N]) {
+    // Check if all cells are filled
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (board[i][j] == 0) {
+                return false;
+            }
+        }
+    }
+
+    // Check if the filled board is valid
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            int num = board[i][j];
+            board[i][j] = 0; // Temporarily remove the number
+            if (!isValid(board, i, j, num)) {
+                board[i][j] = num; // Restore the number
+                return false;
+            }
+            board[i][j] = num; // Restore the number
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    int board[N][N];
+    int level;
+
+    printf("Welcome to Sudoku!\n");
+    printf("Select the difficulty level (1: Easy, 2: Medium, 3: Hard): ");
+    scanf("%d", &level);
+
+    switch (level) {
+        case 1:
+            generateRandomSudoku(board, 30); // Easy level
+            break;
+        case 2:
+            generateRandomSudoku(board, 40); // Medium level
+            break;
+        case 3:
+            generateRandomSudoku(board, 50); // Hard level
+            break;
+        default:
+            printf("Invalid level choice.\n");
+            return 1;
+    }
+
+    // Display the initial Sudoku puzzle
+    printBoard(board);
+
+    // Main game loop
+    while (!isSolved(board)) {
+        int row, col, num;
+        printf("Enter row (1-9), column (1-9), and number (1-9) separated by spaces (e.g., 3 5 7): ");
+        scanf("%d %d %d", &row, &col, &num);
+
+        // Check if the input is valid
+        if (row < 1 || row > 9 || col < 1 || col > 9 || num < 1 || num > 9) {
+            printf("Invalid input. Please enter valid values.\n");
+            continue;
+        }
+
+        // Convert to 0-based indexing
+        row--;
+        col--;
+
+        // Check if the number can be placed in the selected cell
+        if (!isValid(board, row, col, num)) {
+            printf("Invalid move. Try again.\n");
+            continue;
+        }
+
+        // Place the number in the cell
+        board[row][col] = num;
+
+        // Display the updated Sudoku board
+        printBoard(board);
+    }
+
+    printf("Congratulations! You won!\n");
+
+    return 0;
+}
